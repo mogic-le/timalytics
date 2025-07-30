@@ -11,28 +11,27 @@ if (!isset($_COOKIE['PHPSESSID'])) {
     //no session id cookie
     die('Not logged into timetacker (no session id)');
 }
-$files = glob(__DIR__ . '/../../app/cache/*/sessions/sess_' . $_COOKIE['PHPSESSID']);
-if (!count($files)) {
-    //no session file
-    die('Not logged into timetacker (no session file)');
-}
-$dir = dirname(reset($files));
-ini_set('session.save_path', $dir);
 session_start();
-if (!isset($_SESSION['_sf2_attributes']['loggedIn'])
-    || $_SESSION['_sf2_attributes']['loggedIn'] === false
-    || !isset($_SESSION['_sf2_attributes']['loginUsername'])
-    || $_SESSION['_sf2_attributes']['loginUsername'] == ''
-) {
-    //no session
-    die('Not logged into timetacker (no valid session data)');
+if(!isset($_SESSION['_sf2_attributes']['_security_main'])) {
+    die('No timetracker session');
+}
+
+$pattern = '/username";s:[0-9]+:"(.*?)"/';
+if (!preg_match($pattern, $_SESSION['_sf2_attributes']['_security_main'], $matches)) {
+    die('No user in timetracker session');
+}
+;
+$username = $matches[1] ?? null;
+
+if($username===null) {
+    die('No username in timetracker session');
 }
 
 $teamMembers = $db->query(
     'SELECT DISTINCT members.username
     FROM users, teams, teams_users, users AS members
     WHERE users.id = teams.lead_user_id
-     AND users.username = ' . $db->quote($_SESSION['_sf2_attributes']['loginUsername']) . '
+     AND users.username = ' . $db->quote($username) . '
      AND users.type = "PL"
      AND teams.id = teams_users.team_id
      AND teams_users.user_id = members.id
@@ -43,5 +42,5 @@ $GLOBALS['cfg']['arAllowedUsers'] = [];
 if (!empty($teamMembers)) {
     $GLOBALS['cfg']['arAllowedUsers'] = array_column($teamMembers, "username");
 }
-$GLOBALS['cfg']['arAllowedUsers'][] = $_SESSION['_sf2_attributes']['loginUsername'];
+$GLOBALS['cfg']['arAllowedUsers'][] = $username;
 ?>
