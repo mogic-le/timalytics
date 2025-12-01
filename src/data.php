@@ -37,11 +37,10 @@ if (isset($_GET['hoursPerDay'])) {
         FILTER_FLAG_ALLOW_FRACTION
     );
     for ($weekOfDay = 1; $weekOfDay <= 5; $weekOfDay++) {
-        $arWorkWeek[$weekOfDay] = $hoursPerDay;
+        $defaultWorkWeek[$weekOfDay] = $hoursPerDay;
     }
-    $arWorkWeek[0] = 0;
-    $arWorkWeek[6] = 0;
-    $arContracts = null;
+    $defaultWorkWeek[0] = 0;
+    $defaultWorkWeek[6] = 0;
 } else {
     $monthStart = $year . '-' . $month . '-01';
     $monthEnd = date('Y-m-t', strtotime($monthStart));
@@ -73,14 +72,14 @@ if (isset($_GET['hoursPerDay'])) {
     }
 
     for ($weekOfDay = 1; $weekOfDay <= 5; $weekOfDay++) {
-        $arWorkWeek[$weekOfDay] = $hoursPerDay;
+        $defaultWorkWeek[$weekOfDay] = $hoursPerDay;
     }
-    $arWorkWeek[0] = 0;
-    $arWorkWeek[6] = 0;
+    $defaultWorkWeek[0] = 0;
+    $defaultWorkWeek[6] = 0;
 
     if (count($arContracts) === 1) {
         $contract = $arContracts[0];
-        $arWorkWeek = $contract['hours'];
+        $defaultWorkWeek = $contract['hours'];
     }
 }
 
@@ -173,18 +172,18 @@ $holidays = require __DIR__ . '/../data/feiertage.php';
  *
  * @param string $date Date in Y-m-d format
  * @param int $weekDay Day of week (1=Monday, ..., 7=Sunday, from date('N'))
- * @param array|null $contracts Array of contracts with start, end, and hours
+ * @param array $arContracts Array of contracts with start, end, and hours
  * @param array $defaultWorkWeek Default work week hours if no contract matches
  * @return float Hours required for this day
  */
-function getContractHoursForDate($date, $weekDay, $contracts, $defaultWorkWeek) {
+function getContractHoursForDate(string $date, int $weekDay, array $arContracts, array $defaultWorkWeek) {
     $dayIndex = ($weekDay == 7) ? 0 : $weekDay;
 
-    if ($contracts === null || empty($contracts)) {
+    if (empty($arContracts)) {
         return $defaultWorkWeek[$dayIndex];
     }
 
-    foreach ($contracts as $contract) {
+    foreach ($arContracts as $contract) {
         $contractStart = $contract['start'];
         $contractEnd = $contract['end'];
 
@@ -214,7 +213,7 @@ for ($n = 1; $n <= $monthdays; $n++) {
     $date = date('Y-m-d', $ts);
     $weekDay = (int) date('N', $ts);
 
-    $requiredHours = getContractHoursForDate($date, $weekDay, $arContracts, $arWorkWeek);
+    $requiredHours = getContractHoursForDate($date, $weekDay, $arContracts, $defaultWorkWeek);
 
     $days[$date] = array(
         'date'     => $date,
@@ -224,6 +223,7 @@ for ($n = 1; $n <= $monthdays; $n++) {
         'holiday'  => isset($holidays[$date]),
         'future'   => $date > $today,
     );
+    // set required worktime for christmas and new year eve to halve the normal time
     if ($GLOBALS['cfg']['HALF_DAY_POLICY']
         && (date('m-d', $ts) == '12-24' || date('m-d', $ts) == '12-31')
     ) {
