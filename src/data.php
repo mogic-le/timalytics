@@ -160,7 +160,13 @@ $stmt = $db->query(
     . ' AND day LIKE "' . (int)$year . '-' . $month . '-%"'
     . ' GROUP BY day ORDER BY day ASC'
 );
-$holidays = require __DIR__ . '/../data/feiertage.php';
+
+// Load holidays from database instead of static file
+$holidays = [];
+$holidayStmt = $db->query('SELECT DATE_FORMAT(day, "%Y-%m-%d") as day, name FROM holidays ORDER BY day ASC');
+foreach ($holidayStmt as $holidayRow) {
+    $holidays[$holidayRow['day']] = $holidayRow['name'];
+}
 
 /**
  * Get working hours for a specific date based on active contracts
