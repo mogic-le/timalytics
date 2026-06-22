@@ -1,15 +1,14 @@
-<div class="projects">
-    <h1>Aktive Projekte</h1>
+<div class="container projects">
+    <h1 style="margin-top: 0px">Aktive Projekte</h1>
     <div class="row">
         <div class="col-md-12">
             <?php foreach ($customers as $customer): ?>
                 <table class="table table-bordered table-hover table-condensed">
                     <colgroup>
-                        <col width="50%">
+                        <col width="60%">
                         <col width="12%">
                         <col width="12%">
-                        <col width="2%">
-                        <col width="12%">
+                        <col width="4%">
                         <col width="12%">
                     </colgroup>
                     <thead>
