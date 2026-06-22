@@ -1,4 +1,5 @@
 <div class="projects">
+    <h1>Aktive Projekte</h1>
     <div class="row">
         <div class="col-md-12">
             <?php foreach ($customers as $customer): ?>
@@ -13,11 +14,11 @@
                     </colgroup>
                     <thead>
                     <tr>
-                        <th>currently active projects for <?php echo $customer; ?></th>
-                        <th style="text-align: right;">Estimated</th>
-                        <th style="text-align: right;">Current</th>
+                        <th><?php echo $customer; ?></th>
+                        <th style="text-align: right;">Schätzung</th>
+                        <th style="text-align: right;">Aktuell</th>
                         <th style="border-left: none;">&nbsp;</th>
-                        <th style="text-align: right;">Left / Exceed</th>
+                        <th style="text-align: right;">Rest / Überhang</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -73,7 +74,7 @@
                     ?>
 
                     <tr class="<?php echo $style; ?>">
-                        <td style="border-top-color: #000;"><b>Summarize</b></td>
+                        <td style="border-top-color: #000;"><b>Summe</b></td>
                         <td style="border-top-color: #000;" class="r"><b><?php echo formatTime($total['estimation']); ?></b></td>
                         <td style="border-top-color: #000;" class="r"><b><?php echo formatTime($total['duration']); ?></b></td>
                         <td style="border-top-color: #000;" class="r"><b><?php echo formatPercent($percent); ?></b></td>
