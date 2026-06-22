@@ -46,3 +46,11 @@ a:target#navigation,
     background-image: linear-gradient(to bottom,#888 0,#777 100%);
     color: white;
 }
+
+/* project list */
+a.single-project {
+    display: none;
+}
+td:hover a.single-project {
+    display: initial;
+}

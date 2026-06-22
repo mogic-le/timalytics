@@ -3,9 +3,13 @@
 require_once __DIR__ . '/../src/bootstrap.php';
 
 $timespan = 7;
+$projectId = null;
 
 if (isset($_GET['timespan'])) {
     $timespan = filter_var($_GET['timespan'], FILTER_SANITIZE_NUMBER_INT);
+}
+if (isset($_GET['project'])) {
+    $projectId = filter_var($_GET['project'], FILTER_SANITIZE_NUMBER_INT);
 }
 
 $stmt = $db->query(
@@ -17,8 +21,11 @@ $stmt = $db->query(
     . ' JOIN projects ON project_id = projects.id'
     . ' JOIN customers ON projects.customer_id = customers.id'
     . ' LEFT JOIN ticket_systems ON projects.ticket_system = ticket_systems.id'
-    . ' WHERE day >= (NOW() - INTERVAL ' . $timespan . ' DAY)'
-    . ' AND estimation > 0'
+    . ' WHERE estimation > 0'
+    . ($projectId !== null
+       ? ' AND projects.id = ' . $projectId
+       : ' AND day >= (NOW() - INTERVAL ' . $timespan . ' DAY)'
+    )
     . ' ORDER BY customers.name, projects.name'
 );
 

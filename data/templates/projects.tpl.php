@@ -46,7 +46,10 @@
                         ?>
 
                         <tr class="<?php echo $style; ?>">
-                            <td><?php echo $linkStart . hs($project['project']) . $linkEnd; ?></td>
+                            <td>
+                                <?php echo $linkStart . hs($project['project']) . $linkEnd; ?>
+                                <a class="single-project" href="?project=<?= $project['project_id'] ?>">#<?= $project['project_id'] ?></a>
+                            </td>
                             <td class="r" title="<?php echo formatTimeDays($project['estimation']);?>"><?php echo formatTime($project['estimation']); ?></td>
                             <td class="r" title="<?php echo formatTimeDays($project['duration']);?>"><?php echo formatTime($project['duration']); ?></td>
                             <td class="r"><b><?php echo formatPercent($percent); ?></b></td>
@@ -88,12 +91,21 @@
             <?php endforeach; ?>
         </div>
     </div>
+
+    <?php if ($projectId): ?>
+        <p>
+            <a href="projects.php">Alle Projekte anzeigen</a>
+        </p>
+    <?php endif; ?>
+
+
     <h4>Parameter</h4>
     <ul>
-        <li>timespan
+        <li><tt>timespan</tt>
             <a href="<?php echo getBaseUrl('timespan', 7); ?>">7</a> -
             <a href="<?php echo getBaseUrl('timespan', 14); ?>">14</a> -
             <a href="<?php echo getBaseUrl('timespan', 30); ?>">30</a>
         </li>
+        <li><tt>project</tt> - single project view</li>
     </ul>
 </div>
